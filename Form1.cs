@@ -15,11 +15,11 @@ namespace PremierePictureBoxApp
     public partial class Form1 : Form
     {
         private const int width = 383;
-        private const int startX = 291;
-        private const int startY = 503;
+        private const int startX = 287;
+        private const int startY = 500;
         private const int ACCEPTED_INTERVAL = 3;
         private const int ACCEPTED_AVERAGE_INTERVAL = 2;
-        private const int MOUSE_CLICK_LIMIT = 10;
+        private const int MOUSE_CLICK_LIMIT = 100;
 
         static System.Windows.Forms.Timer myTimer = new System.Windows.Forms.Timer();
 
@@ -46,7 +46,7 @@ namespace PremierePictureBoxApp
             SetCursorPos(x, y);
             //this.Refresh();
             //Application.DoEvents();
-            Thread.Sleep(100);
+            Thread.Sleep(500);
             mouse_event(MOUSEEVENTF_RIGHTDOWN, x, y, 0, 0);
             mouse_event(MOUSEEVENTF_RIGHTUP, x, y, 0, 0);
             numberOfClicks++;
@@ -57,7 +57,9 @@ namespace PremierePictureBoxApp
             InitializeComponent();
 
             myTimer.Tick += new EventHandler(TimerEventProcessor);
-            myTimer.Interval = 45;
+            myTimer.Interval = 1000;
+
+            
         }
 
         private void TimerEventProcessor(Object myObject, EventArgs myEventArgs)
@@ -142,7 +144,7 @@ namespace PremierePictureBoxApp
                 {
                     int xCenterInGame = startX + p.X;
                     int yCenterInGame = startY + p.Y;
-                    //Clicker(xCenterInGame, yCenterInGame);
+                    Clicker(xCenterInGame, yCenterInGame);
 
                 }
 
@@ -399,7 +401,6 @@ namespace PremierePictureBoxApp
         /// <param name="drawCircle"></param>
         private void addCenterPointToCaseAndRefresh(Point center, Bitmap bm, int r, bool drawCircle)
         {
-            
             int xCenter = center.X;
             int yCenter = center.Y;
             int rr = r * r;
@@ -443,13 +444,18 @@ namespace PremierePictureBoxApp
 
         private void btn_live_Click(object sender, EventArgs e)
         {
-            
+            numberOfClicks = 0;
             myTimer.Start();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             myTimer.Stop();
+        }
+
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+
         }
     }
 
