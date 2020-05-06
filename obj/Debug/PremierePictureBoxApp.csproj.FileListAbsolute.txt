@@ -1,0 +1,10 @@
+C:\Users\Nhon\workspace\c_sharp\PremierePictureBoxApp\PremierePictureBoxApp\bin\Debug\PremierePictureBoxApp.exe.config
+C:\Users\Nhon\workspace\c_sharp\PremierePictureBoxApp\PremierePictureBoxApp\bin\Debug\PremierePictureBoxApp.exe
+C:\Users\Nhon\workspace\c_sharp\PremierePictureBoxApp\PremierePictureBoxApp\bin\Debug\PremierePictureBoxApp.pdb
+C:\Users\Nhon\workspace\c_sharp\PremierePictureBoxApp\PremierePictureBoxApp\obj\Debug\PremierePictureBoxApp.csprojAssemblyReference.cache
+C:\Users\Nhon\workspace\c_sharp\PremierePictureBoxApp\PremierePictureBoxApp\obj\Debug\PremierePictureBoxApp.Form1.resources
+C:\Users\Nhon\workspace\c_sharp\PremierePictureBoxApp\PremierePictureBoxApp\obj\Debug\PremierePictureBoxApp.Properties.Resources.resources
+C:\Users\Nhon\workspace\c_sharp\PremierePictureBoxApp\PremierePictureBoxApp\obj\Debug\PremierePictureBoxApp.csproj.GenerateResource.cache
+C:\Users\Nhon\workspace\c_sharp\PremierePictureBoxApp\PremierePictureBoxApp\obj\Debug\PremierePictureBoxApp.csproj.CoreCompileInputs.cache
+C:\Users\Nhon\workspace\c_sharp\PremierePictureBoxApp\PremierePictureBoxApp\obj\Debug\PremierePictureBoxApp.exe
+C:\Users\Nhon\workspace\c_sharp\PremierePictureBoxApp\PremierePictureBoxApp\obj\Debug\PremierePictureBoxApp.pdb
