@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -18,9 +19,9 @@ namespace PremierePictureBoxApp
         private const int startY = 503;
         private const int ACCEPTED_INTERVAL = 3;
         private const int ACCEPTED_AVERAGE_INTERVAL = 2;
-        private const int MOUSE_CLICK_LIMIT = 1;
+        private const int MOUSE_CLICK_LIMIT = 10;
 
-        static Timer myTimer = new Timer();
+        static System.Windows.Forms.Timer myTimer = new System.Windows.Forms.Timer();
 
         // number of clicks
         // must be inferior or equal to MOUSE_CLICK_LIMIT
@@ -45,6 +46,7 @@ namespace PremierePictureBoxApp
             SetCursorPos(x, y);
             //this.Refresh();
             //Application.DoEvents();
+            Thread.Sleep(100);
             mouse_event(MOUSEEVENTF_RIGHTDOWN, x, y, 0, 0);
             mouse_event(MOUSEEVENTF_RIGHTUP, x, y, 0, 0);
             numberOfClicks++;
@@ -55,7 +57,7 @@ namespace PremierePictureBoxApp
             InitializeComponent();
 
             myTimer.Tick += new EventHandler(TimerEventProcessor);
-            myTimer.Interval = 100;
+            myTimer.Interval = 45;
         }
 
         private void TimerEventProcessor(Object myObject, EventArgs myEventArgs)
@@ -130,22 +132,37 @@ namespace PremierePictureBoxApp
                 Point p = centerOfCase(X, Y, sizeOfTable, width);
 
                 // Modify the picture bitmap by adding the center point
-                addCenterPointToCaseAndRefresh(p, bitmap);
+                bool draw = true;
+                if (sizeOfTable == 2) draw = false;
+                addCenterPointToCaseAndRefresh(p, bitmap, widthZone / 2, draw);
+                // Draw a circle at point p with R = widthZone/2
 
                 // Get the center of the different case in the game screen
-                //if (numberOfClicks < MOUSE_CLICK_LIMIT)
-                //{
-                //    int xCenterInGame = startX + X;
-                //    int yCenterInGame = startY + Y;
-                //    Clicker(xCenterInGame, yCenterInGame);
-                    
-                //}
-                
+                if (numberOfClicks < MOUSE_CLICK_LIMIT)
+                {
+                    int xCenterInGame = startX + p.X;
+                    int yCenterInGame = startY + p.Y;
+                    //Clicker(xCenterInGame, yCenterInGame);
+
+                }
+
 
                 textBox1.Text = Convert.ToString(X) + ", " + Convert.ToString(Y);
             }
         }
 
+        #region Find the different case
+
+        /// <summary>
+        /// Find the different case from RTable then GTable then BTable
+        /// </summary>
+        /// <param name="averageRTable"></param>
+        /// <param name="averageGTable"></param>
+        /// <param name="averageBTable"></param>
+        /// <param name="sizeOfTable"></param>
+        /// <param name="X"></param>
+        /// <param name="Y"></param>
+        /// <returns></returns>
         private bool findTheDifferentCase(int[] averageRTable, int[] averageGTable, int[] averageBTable, int sizeOfTable, ref int X, ref int Y)
         {
             bool isFound = false;
@@ -180,6 +197,15 @@ namespace PremierePictureBoxApp
             return isFound;
         }
 
+        /// <summary>
+        /// Find the different case from GTable and BTable if not found in RTable
+        /// </summary>
+        /// <param name="averageGTable"></param>
+        /// <param name="averageBTable"></param>
+        /// <param name="sizeOfTable"></param>
+        /// <param name="X"></param>
+        /// <param name="Y"></param>
+        /// <returns></returns>
         private bool findTheDifferentCase(int[] averageGTable, int[] averageBTable, int sizeOfTable, ref int X, ref int Y)
         {
             bool isFound = false;
@@ -213,6 +239,14 @@ namespace PremierePictureBoxApp
             return isFound;
         }
 
+        /// <summary>
+        /// Find the different case from BTable if not found from RTable and GTable
+        /// </summary>
+        /// <param name="averageBTable"></param>
+        /// <param name="sizeOfTable"></param>
+        /// <param name="X"></param>
+        /// <param name="Y"></param>
+        /// <returns></returns>
         private bool findTheDifferentCase(int[] averageBTable, int sizeOfTable, ref int X, ref int Y)
         {
             bool isFound = false;
@@ -247,6 +281,15 @@ namespace PremierePictureBoxApp
             return isFound;
         }
 
+        #endregion
+
+        /// <summary>
+        /// Display case averages to console
+        /// </summary>
+        /// <param name="RTable"></param>
+        /// <param name="GTable"></param>
+        /// <param name="BTable"></param>
+        /// <param name="size"></param>
         private void displayAllAverageCase(int[] RTable, int[] GTable, int[] BTable, int size)
         {
             for (int i=0; i<size; i++)
@@ -346,24 +389,44 @@ namespace PremierePictureBoxApp
             }
         }
 
-        private void addCenterPointToCaseAndRefresh(Point center, Bitmap bm)
+        /// <summary>
+        /// Add the center point to the found case then refresh the bitmap
+        /// Also add a circle around this point of rayon R
+        /// </summary>
+        /// <param name="center"></param>
+        /// <param name="bm"></param>
+        /// <param name="r"></param>
+        /// <param name="drawCircle"></param>
+        private void addCenterPointToCaseAndRefresh(Point center, Bitmap bm, int r, bool drawCircle)
         {
+            
+            int xCenter = center.X;
+            int yCenter = center.Y;
+            int rr = r * r;
 
-            if (center.X > 0 && center.X < bm.Width && center.Y > 0 && center.Y < bm.Height)
+            if (xCenter > 0 && xCenter < bm.Width && yCenter > 0 && yCenter < bm.Height)
             {
                 Bitmap m_copyBm = bm;
                 // Draw a line Y
                 for (int i = 0; i < bm.Width; i++)
                 {
-                    m_copyBm.SetPixel(i, center.Y, Color.White);
+                    m_copyBm.SetPixel(i, yCenter, Color.White);
                 }
 
                 // draw a line X
                 for (int j = 0; j < bm.Height; j++)
                 {
-                    m_copyBm.SetPixel(center.X, j, Color.White);
+                    m_copyBm.SetPixel(xCenter, j, Color.White);
                 }
-                pictureBox1.Image = m_copyBm;
+                if (drawCircle)
+                {
+                    // Draw a circle at point p with R = widthZone/2
+                    for (int i = xCenter - (int)r; i <= xCenter + r && i < bm.Width; i++)
+                        for (int j = yCenter - (int)r; j <= yCenter + r && j < bm.Height; j++)
+                            if (Math.Abs(Math.Pow(i - xCenter, 2) + Math.Pow(j - yCenter, 2) - rr) <= r)
+                                m_copyBm.SetPixel(i, j, Color.White);
+                    pictureBox1.Image = m_copyBm;
+                }
             }
         }
 
