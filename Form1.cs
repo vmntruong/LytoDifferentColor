@@ -21,7 +21,7 @@ namespace PremierePictureBoxApp
         private const int startY = 500;
         private const int ACCEPTED_INTERVAL = 3;
         private const int ACCEPTED_AVERAGE_INTERVAL = 2;
-        private const int MOUSE_CLICK_LIMIT = 200;
+        private const int MOUSE_CLICK_LIMIT = 20;
 
         static System.Windows.Forms.Timer myTimer = new System.Windows.Forms.Timer();
 
@@ -79,7 +79,7 @@ namespace PremierePictureBoxApp
             pictureBox1.Image = destBitmap;
             //textBox1.Text = Convert.ToString(getSizeOfTable(destBitmap));
             Thread.Sleep(20);
-            imageProcessing(destBitmap);
+            imageProcessing(destBitmap, true);
 
             
         }
@@ -94,7 +94,7 @@ namespace PremierePictureBoxApp
         /// </summary>
         /// <param name="bitmap"></param>
         /// <param name="level"></param>
-        private void imageProcessing(Bitmap bitmap)
+        private void imageProcessing(Bitmap bitmap, bool mouseControl)
         {
             int sizeOfTable = getSizeOfTable(bitmap);
             if (sizeOfTable != 0)
@@ -144,7 +144,7 @@ namespace PremierePictureBoxApp
 
                 // Modify the picture bitmap by adding the center point
                 bool draw = true;
-                if (sizeOfTable == 2) draw = false;
+                //if (sizeOfTable == 2) draw = false;
                 addCenterPointToCaseAndRefresh(p, bitmap, widthZone / 2, draw);
                 // Draw a circle at point p with R = widthZone/2
 
@@ -153,11 +153,10 @@ namespace PremierePictureBoxApp
                 {
                     int xCenterInGame = startX + p.X;
                     int yCenterInGame = startY + p.Y;
-                    Clicker(xCenterInGame, yCenterInGame);
 
+                    if (mouseControl)
+                        Clicker(xCenterInGame, yCenterInGame);
                 }
-
-
                 textBox1.Text = Convert.ToString(X) + ", " + Convert.ToString(Y);
             }
         }
@@ -431,8 +430,8 @@ namespace PremierePictureBoxApp
                 if (drawCircle)
                 {
                     // Draw a circle at point p with R = widthZone/2
-                    for (int i = xCenter - (int)r; i <= xCenter + r && i < bm.Width; i++)
-                        for (int j = yCenter - (int)r; j <= yCenter + r && j < bm.Height; j++)
+                    for (int i = xCenter - (int)r; i >= 0 && i <= xCenter + r && i < bm.Width; i++)
+                        for (int j = yCenter - (int)r; j >= 0 && j <= yCenter + r && j < bm.Height; j++)
                             if (Math.Abs(Math.Pow(i - xCenter, 2) + Math.Pow(j - yCenter, 2) - rr) <= r)
                                 m_copyBm.SetPixel(i, j, Color.White);
                     pictureBox1.Image = m_copyBm;
@@ -448,7 +447,10 @@ namespace PremierePictureBoxApp
         private void button1_Click_1(object sender, EventArgs e)
         {
             Bitmap bitmap = (Bitmap)pictureBox1.Image;
-            imageProcessing(bitmap);
+            if (bitmap != null)
+            {
+                imageProcessing(bitmap, false);
+            }
         }
 
         private void btn_live_Click(object sender, EventArgs e)
