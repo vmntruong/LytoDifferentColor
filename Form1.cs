@@ -12,22 +12,30 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 
+using Point = System.Drawing.Point;
+using Size = System.Drawing.Size;
+
 namespace PremierePictureBoxApp
 {
     public partial class Form1 : Form
     {
         private const int width = 383;
-        private const int startX = 287;
-        private const int startY = 500;
+        private const int startX = 289;
+        private const int startY = 501;
         private const int ACCEPTED_INTERVAL = 3;
         private const int ACCEPTED_AVERAGE_INTERVAL = 2;
-        private const int MOUSE_CLICK_LIMIT = 20;
+        private const int MOUSE_CLICK_LIMIT = 200;
+
+        private int count = 0;
+
+        private string tempPath = @"C:\Users\Nhon\workspace\c_sharp\PremierePictureBoxApp\PremierePictureBoxApp\temp\";
 
         static System.Windows.Forms.Timer myTimer = new System.Windows.Forms.Timer();
 
         // number of clicks
         // must be inferior or equal to MOUSE_CLICK_LIMIT
         static int numberOfClicks = 0;
+        private bool _saveImage = false;
 
         // Mouse control
         [DllImport("user32")]
@@ -42,8 +50,8 @@ namespace PremierePictureBoxApp
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention= CallingConvention.StdCall)]
         public static extern void mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
 
-    // Clicker at position x,y
-    public void Clicker(int x, int y)
+        // Clicker at position x,y
+        public void Clicker(int x, int y)
         {
             SetCursorPos(x, y);
             //this.Refresh();
@@ -59,7 +67,27 @@ namespace PremierePictureBoxApp
             InitializeComponent();
 
             myTimer.Tick += new EventHandler(TimerEventProcessor);
-            myTimer.Interval = 380;
+            myTimer.Interval = 500;
+
+
+            // This is to stop the timer when a key is clicked
+            this.KeyPress += new KeyPressEventHandler(OnKeyPress);
+
+            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(tempPath);
+
+            foreach (System.IO.FileInfo file in di.GetFiles())
+            {
+                file.Delete();
+            }
+            foreach (System.IO.DirectoryInfo dir in di.GetDirectories())
+            {
+                dir.Delete(true);
+            }
+
+            if (count > MOUSE_CLICK_LIMIT)
+            {
+                myTimer.Stop();
+            }
 
             //if (Keyboard.IsKeyDown(Key.Enter))
             //{
@@ -68,6 +96,11 @@ namespace PremierePictureBoxApp
             //}
         }
 
+        private void OnKeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (myTimer.Enabled)
+                myTimer.Stop();
+        }
         private void TimerEventProcessor(Object myObject, EventArgs myEventArgs)
         {
             Bitmap destBitmap = new Bitmap(width, width);
@@ -79,9 +112,16 @@ namespace PremierePictureBoxApp
             pictureBox1.Image = destBitmap;
             //textBox1.Text = Convert.ToString(getSizeOfTable(destBitmap));
             Thread.Sleep(20);
-            imageProcessing(destBitmap, true);
+            imageProcessing(destBitmap, true, _saveImage);
 
-            
+
+            count++;
+
+            //if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.Enter))
+            //{
+            //    myTimer.Enabled = false;
+            //    MessageBox.Show("Timer Stopped");
+            //}
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -99,7 +139,7 @@ namespace PremierePictureBoxApp
         /// </summary>
         /// <param name="bitmap"></param>
         /// <param name="level"></param>
-        private void imageProcessing(Bitmap bitmap, bool mouseControl)
+        private void imageProcessing(Bitmap bitmap, bool mouseControl ,bool saveImage)
         {
             // Get the size m of table m x m 
             int sizeOfTable = getSizeOfTable(bitmap);
@@ -112,6 +152,8 @@ namespace PremierePictureBoxApp
                 int[] averageRTable = new int[sizeOfTable * sizeOfTable];
                 int[] averageGTable = new int[sizeOfTable * sizeOfTable];
                 int[] averageBTable = new int[sizeOfTable * sizeOfTable];
+
+                #region Calculate the color averages
 
                 for (int i = 0; i < sizeOfTable; i++)
                 {
@@ -137,8 +179,11 @@ namespace PremierePictureBoxApp
                         averageBTable[sizeOfTable * i + j] = (int)averageB;
                     }
                 }
+
+                #endregion
+
                 // Display all the average case in console
-                //displayAllAverageCase(averageRTable, averageGTable, averageBTable, sizeOfTable * sizeOfTable);
+                displayAllAverageCase(averageRTable, averageGTable, averageBTable, sizeOfTable * sizeOfTable);
 
                 // Find the different case
                 int X = -1;
@@ -155,14 +200,26 @@ namespace PremierePictureBoxApp
                 // Draw a circle at point p with R = widthZone/2
 
                 // Get the center of the different case in the game screen
-                if (numberOfClicks < MOUSE_CLICK_LIMIT)
-                {
-                    int xCenterInGame = startX + p.X;
-                    int yCenterInGame = startY + p.Y;
+                if (mouseControl)
+                    if (numberOfClicks < MOUSE_CLICK_LIMIT)
+                        if (X != -1 && Y != -1)
+                        {
+                            int xCenterInGame = startX + p.X;
+                            int yCenterInGame = startY + p.Y;
+                            Clicker(xCenterInGame, yCenterInGame);
+                        }
 
-                    if (mouseControl)
-                        Clicker(xCenterInGame, yCenterInGame);
+                // Save the images to a temp file
+                if (saveImage)
+                {
+                    string imageName = "level" + (count+1) + ".png";
+                    bitmap.Save(tempPath + imageName,
+                        System.Drawing.Imaging.ImageFormat.Png);
                 }
+
+                // Dispose of the bitmap
+                //bitmap.Dispose();
+
                 textBox1.Text = Convert.ToString(X) + ", " + Convert.ToString(Y);
             }
         }
@@ -326,7 +383,7 @@ namespace PremierePictureBoxApp
             int temp = 1;
             for (int i = 1, j = 1; i < bitmap.Width && j < bitmap.Height; i=i+1, j=j+1)
             {
-                Console.WriteLine(bitmap.GetPixel(i, j).ToString());
+                // Console.WriteLine(bitmap.GetPixel(i, j).ToString());
 
                 if (!similarColors(bitmap.GetPixel(i, j),bitmap.GetPixel(i - 1, j - 1)))
                 {
@@ -455,7 +512,7 @@ namespace PremierePictureBoxApp
             Bitmap bitmap = (Bitmap)pictureBox1.Image;
             if (bitmap != null)
             {
-                imageProcessing(bitmap, false);
+                imageProcessing(bitmap, false, true);
             }
         }
 
