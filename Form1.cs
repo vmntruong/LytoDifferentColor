@@ -89,13 +89,19 @@ namespace PremierePictureBoxApp
         }
 
         /// <summary>
-        /// 
-        /// 
+        /// This is to main function which is to process the image presenting in the Picture box
+        /// This will do the following:
+        ///     - calculates the size m of the table m x m circles
+        ///     - calculates the average color for each case
+        ///     - then finds the different case
+        ///     - draw a circle, a vertical line and a horizontal line at the center 
+        ///     - control the mouse to click the circle in the game if bool=true
         /// </summary>
         /// <param name="bitmap"></param>
         /// <param name="level"></param>
         private void imageProcessing(Bitmap bitmap, bool mouseControl)
         {
+            // Get the size m of table m x m 
             int sizeOfTable = getSizeOfTable(bitmap);
             if (sizeOfTable != 0)
             {
