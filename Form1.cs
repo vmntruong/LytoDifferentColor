@@ -8,7 +8,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Input;
 
 namespace PremierePictureBoxApp
 {
@@ -19,7 +21,7 @@ namespace PremierePictureBoxApp
         private const int startY = 500;
         private const int ACCEPTED_INTERVAL = 3;
         private const int ACCEPTED_AVERAGE_INTERVAL = 2;
-        private const int MOUSE_CLICK_LIMIT = 100;
+        private const int MOUSE_CLICK_LIMIT = 200;
 
         static System.Windows.Forms.Timer myTimer = new System.Windows.Forms.Timer();
 
@@ -40,13 +42,13 @@ namespace PremierePictureBoxApp
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention= CallingConvention.StdCall)]
         public static extern void mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
 
-        // Clicker at position x,y
-        public void Clicker(int x, int y)
+    // Clicker at position x,y
+    public void Clicker(int x, int y)
         {
             SetCursorPos(x, y);
             //this.Refresh();
             //Application.DoEvents();
-            Thread.Sleep(500);
+            Thread.Sleep(20);
             mouse_event(MOUSEEVENTF_RIGHTDOWN, x, y, 0, 0);
             mouse_event(MOUSEEVENTF_RIGHTUP, x, y, 0, 0);
             numberOfClicks++;
@@ -57,9 +59,13 @@ namespace PremierePictureBoxApp
             InitializeComponent();
 
             myTimer.Tick += new EventHandler(TimerEventProcessor);
-            myTimer.Interval = 1000;
+            myTimer.Interval = 380;
 
-            
+            //if (Keyboard.IsKeyDown(Key.Enter))
+            //{
+            //    if (myTimer.Enabled)
+            //        myTimer.Stop();
+            //}
         }
 
         private void TimerEventProcessor(Object myObject, EventArgs myEventArgs)
@@ -72,7 +78,10 @@ namespace PremierePictureBoxApp
             }
             pictureBox1.Image = destBitmap;
             //textBox1.Text = Convert.ToString(getSizeOfTable(destBitmap));
+            Thread.Sleep(20);
             imageProcessing(destBitmap);
+
+            
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -456,6 +465,15 @@ namespace PremierePictureBoxApp
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
 
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.C)
+            {
+                myTimer.Stop();
+            }
+            
         }
     }
 
