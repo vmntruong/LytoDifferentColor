@@ -14,6 +14,7 @@ using System.Windows.Input;
 
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
+using Timer = System.Windows.Forms.Timer;
 
 namespace PremierePictureBoxApp
 {
@@ -24,13 +25,21 @@ namespace PremierePictureBoxApp
         private const int startY = 501;
         private const int ACCEPTED_INTERVAL = 3;
         private const int ACCEPTED_AVERAGE_INTERVAL = 2;
-        private const int MOUSE_CLICK_LIMIT = 200;
+        private const int MOUSE_CLICK_LIMIT = 10;
 
         private int count = 0;
 
+        // Find the different case
+        int X = -1;
+        int Y = -1;
+        int Xprevious = -1;
+        int Yprevious = -1;
+
         private string tempPath = @"C:\Users\Nhon\workspace\c_sharp\PremierePictureBoxApp\PremierePictureBoxApp\temp\";
 
-        static System.Windows.Forms.Timer myTimer = new System.Windows.Forms.Timer();
+        static Timer myTimer = new Timer();
+
+        static Timer timerToStopMouse = new Timer();
 
         // number of clicks
         // must be inferior or equal to MOUSE_CLICK_LIMIT
@@ -47,6 +56,8 @@ namespace PremierePictureBoxApp
         private const int MOUSEEVENTF_RIGHTDOWN = 0x0008; /* right button down */
         private const int MOUSEEVENTF_RIGHTUP = 0x0010; /* right button up */
 
+        private static int m_counter = 0;
+
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention= CallingConvention.StdCall)]
         public static extern void mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
 
@@ -62,13 +73,26 @@ namespace PremierePictureBoxApp
             numberOfClicks++;
         }
 
+        // Get mouse click number limit
+        private int getMouseClickNumberLimitFromInput()
+        {
+            int result = 0;
+
+            int.TryParse(tB_maxClicks.Text, out result);
+
+            return result;
+        }
+
         public Form1()
         {
             InitializeComponent();
 
             myTimer.Tick += new EventHandler(TimerEventProcessor);
-            myTimer.Interval = 500;
+            myTimer.Interval = 400;
 
+            // create this timer to stop the myTimer 
+            timerToStopMouse.Tick += new EventHandler(Timer1_Tick);
+            timerToStopMouse.Interval = 1000;
 
             // This is to stop the timer when a key is clicked
             this.KeyPress += new KeyPressEventHandler(OnKeyPress);
@@ -120,8 +144,20 @@ namespace PremierePictureBoxApp
             //if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.Enter))
             //{
             //    myTimer.Enabled = false;
-            //    MessageBox.Show("Timer Stopped");
-            //}
+            //    MessageBox.Show("Timer Stopped");         //}
+        }
+
+        private void Timer1_Tick(Object myObject, EventArgs myEventArgs)
+        {
+            m_counter++;
+            if (m_counter >= 5)
+            {
+                if (myTimer.Enabled)
+                {
+                    timerToStopMouse.Stop();
+                    myTimer.Stop();
+                }
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -185,13 +221,30 @@ namespace PremierePictureBoxApp
                 // Display all the average case in console
                 displayAllAverageCase(averageRTable, averageGTable, averageBTable, sizeOfTable * sizeOfTable);
 
-                // Find the different case
-                int X = -1;
-                int Y = -1;
+
                 findTheDifferentCase(averageRTable, averageGTable, averageBTable, sizeOfTable, ref X, ref Y);
                 
                 // Get the center of the different case in the bitmap
                 Point p = centerOfCase(X, Y, sizeOfTable, width);
+
+                // if X and Y did not change
+                if (X == -1 && Y == -1)
+                {
+                    m_counter++;
+                }
+                else
+                {
+                    if (X == Xprevious && Y == Yprevious)
+                    {
+                        m_counter++;
+                    }
+                    else
+                    {
+                        m_counter = 0;
+                    }
+                    Xprevious = X;
+                    Yprevious = Y;
+                }
 
                 // Modify the picture bitmap by adding the center point
                 bool draw = true;
@@ -201,12 +254,14 @@ namespace PremierePictureBoxApp
 
                 // Get the center of the different case in the game screen
                 if (mouseControl)
-                    if (numberOfClicks < MOUSE_CLICK_LIMIT)
+                    if (numberOfClicks < getMouseClickNumberLimitFromInput())
                         if (X != -1 && Y != -1)
                         {
                             int xCenterInGame = startX + p.X;
                             int yCenterInGame = startY + p.Y;
                             Clicker(xCenterInGame, yCenterInGame);
+
+                            tB_numberOfClick.Text = Convert.ToString(numberOfClicks);
                         }
 
                 // Save the images to a temp file
@@ -512,19 +567,24 @@ namespace PremierePictureBoxApp
             Bitmap bitmap = (Bitmap)pictureBox1.Image;
             if (bitmap != null)
             {
-                imageProcessing(bitmap, false, true);
+                imageProcessing(bitmap, false, _saveImage);
             }
         }
 
         private void btn_live_Click(object sender, EventArgs e)
         {
+            pictureBox1.Image = null;
             numberOfClicks = 0;
             myTimer.Start();
+            timerToStopMouse.Start();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
+            numberOfClicks = 0;
             myTimer.Stop();
+            timerToStopMouse.Stop();
+            
         }
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
@@ -539,6 +599,16 @@ namespace PremierePictureBoxApp
                 myTimer.Stop();
             }
             
+        }
+
+        private void timer1_Tick_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 
