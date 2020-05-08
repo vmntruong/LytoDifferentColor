@@ -25,7 +25,7 @@ namespace PremierePictureBoxApp
         private const int startY = 501;
         private const int ACCEPTED_INTERVAL = 3;
         private const int ACCEPTED_AVERAGE_INTERVAL = 2;
-        private const int MOUSE_CLICK_LIMIT = 10;
+        //private const int MOUSE_CLICK_LIMIT = 10;
 
         private int count = 0;
 
@@ -42,9 +42,9 @@ namespace PremierePictureBoxApp
         static Timer timerToStopMouse = new Timer();
 
         // number of clicks
-        // must be inferior or equal to MOUSE_CLICK_LIMIT
+        // must be inferior or equal to MOUSE_CLICK_LIMIT, now is set by user via interface
         static int numberOfClicks = 0;
-        private bool _saveImage = false;
+        private bool _saveImage = true;
 
         // Mouse control
         [DllImport("user32")]
@@ -67,7 +67,7 @@ namespace PremierePictureBoxApp
             SetCursorPos(x, y);
             //this.Refresh();
             //Application.DoEvents();
-            Thread.Sleep(20);
+            Thread.Sleep(10); //20
             mouse_event(MOUSEEVENTF_RIGHTDOWN, x, y, 0, 0);
             mouse_event(MOUSEEVENTF_RIGHTUP, x, y, 0, 0);
             numberOfClicks++;
@@ -77,9 +77,7 @@ namespace PremierePictureBoxApp
         private int getMouseClickNumberLimitFromInput()
         {
             int result = 0;
-
             int.TryParse(tB_maxClicks.Text, out result);
-
             return result;
         }
 
@@ -97,20 +95,14 @@ namespace PremierePictureBoxApp
             // This is to stop the timer when a key is clicked
             this.KeyPress += new KeyPressEventHandler(OnKeyPress);
 
-            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(tempPath);
-
-            foreach (System.IO.FileInfo file in di.GetFiles())
+            // Delete all images in the temp folder
+            if (_saveImage)
             {
-                file.Delete();
-            }
-            foreach (System.IO.DirectoryInfo dir in di.GetDirectories())
-            {
-                dir.Delete(true);
-            }
-
-            if (count > MOUSE_CLICK_LIMIT)
-            {
-                myTimer.Stop();
+                System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(tempPath);
+                foreach (System.IO.FileInfo file in di.GetFiles())
+                    file.Delete();
+                foreach (System.IO.DirectoryInfo dir in di.GetDirectories())
+                    dir.Delete(true);
             }
 
             //if (Keyboard.IsKeyDown(Key.Enter))
@@ -125,26 +117,25 @@ namespace PremierePictureBoxApp
             if (myTimer.Enabled)
                 myTimer.Stop();
         }
+
         private void TimerEventProcessor(Object myObject, EventArgs myEventArgs)
         {
             Bitmap destBitmap = new Bitmap(width, width);
-
             using (Graphics g = Graphics.FromImage(destBitmap))
             {
                 g.CopyFromScreen(new Point(startX, startY), Point.Empty, new Size(width, width));
             }
             pictureBox1.Image = destBitmap;
-            //textBox1.Text = Convert.ToString(getSizeOfTable(destBitmap));
+
             Thread.Sleep(20);
             imageProcessing(destBitmap, true, _saveImage);
-
-
             count++;
 
             //if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.Enter))
             //{
             //    myTimer.Enabled = false;
-            //    MessageBox.Show("Timer Stopped");         //}
+            //    MessageBox.Show("Timer Stopped");
+            //}
         }
 
         private void Timer1_Tick(Object myObject, EventArgs myEventArgs)
@@ -158,10 +149,6 @@ namespace PremierePictureBoxApp
                     myTimer.Stop();
                 }
             }
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
         }
 
         /// <summary>
@@ -221,7 +208,7 @@ namespace PremierePictureBoxApp
                 // Display all the average case in console
                 displayAllAverageCase(averageRTable, averageGTable, averageBTable, sizeOfTable * sizeOfTable);
 
-
+                // Find the case with different color
                 findTheDifferentCase(averageRTable, averageGTable, averageBTable, sizeOfTable, ref X, ref Y);
                 
                 // Get the center of the different case in the bitmap
@@ -573,7 +560,7 @@ namespace PremierePictureBoxApp
 
         private void btn_live_Click(object sender, EventArgs e)
         {
-            pictureBox1.Image = null;
+            
             numberOfClicks = 0;
             myTimer.Start();
             timerToStopMouse.Start();
@@ -581,6 +568,7 @@ namespace PremierePictureBoxApp
 
         private void button2_Click(object sender, EventArgs e)
         {
+            pictureBox1.Image = null;
             numberOfClicks = 0;
             myTimer.Stop();
             timerToStopMouse.Stop();

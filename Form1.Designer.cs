@@ -127,7 +127,7 @@
             this.tB_maxClicks.Name = "tB_maxClicks";
             this.tB_maxClicks.Size = new System.Drawing.Size(102, 45);
             this.tB_maxClicks.TabIndex = 12;
-            this.tB_maxClicks.Text = "100";
+            this.tB_maxClicks.Text = "200";
             // 
             // label2
             // 
