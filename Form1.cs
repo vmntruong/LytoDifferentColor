@@ -24,7 +24,8 @@ namespace PremierePictureBoxApp
         private const int startX = 289;
         private const int startY = 501;
         private const int ACCEPTED_INTERVAL = 3;
-        private const int ACCEPTED_AVERAGE_INTERVAL = 2;
+        private int ACCEPTED_AVERAGE_INTERVAL;
+        private int acceptedAverageInterval;
         //private const int MOUSE_CLICK_LIMIT = 10;
 
         private int count = 0;
@@ -84,6 +85,9 @@ namespace PremierePictureBoxApp
         public Form1()
         {
             InitializeComponent();
+
+            ACCEPTED_AVERAGE_INTERVAL = 10;
+            acceptedAverageInterval = ACCEPTED_AVERAGE_INTERVAL;
 
             myTimer.Tick += new EventHandler(TimerEventProcessor);
             myTimer.Interval = 400;
@@ -209,8 +213,25 @@ namespace PremierePictureBoxApp
                 displayAllAverageCase(averageRTable, averageGTable, averageBTable, sizeOfTable * sizeOfTable);
 
                 // Find the case with different color
-                findTheDifferentCase(averageRTable, averageGTable, averageBTable, sizeOfTable, ref X, ref Y);
-                
+                while (acceptedAverageInterval>=0)
+                {
+                    if (findTheDifferentCase(averageRTable, averageGTable, averageBTable, sizeOfTable, ref X, ref Y))
+                    {
+                        acceptedAverageInterval = ACCEPTED_AVERAGE_INTERVAL;
+                        break;
+                    }
+                    if (acceptedAverageInterval <= 1)
+                    {
+                        if (myTimer.Enabled == true)
+                        {
+                            myTimer.Stop();
+                            Thread.Sleep(400);
+                            myTimer.Start();
+                        }
+                    }
+                    acceptedAverageInterval--;
+                }
+
                 // Get the center of the different case in the bitmap
                 Point p = centerOfCase(X, Y, sizeOfTable, width);
 
@@ -233,9 +254,17 @@ namespace PremierePictureBoxApp
                     Yprevious = Y;
                 }
 
+                // Save the images to a temp file
+                if (saveImage)
+                {
+                    string imageName = "level" + (count + 1) + "_0.png";
+                    bitmap.Save(tempPath + imageName,
+                        System.Drawing.Imaging.ImageFormat.Png);
+                }
+
                 // Modify the picture bitmap by adding the center point
                 bool draw = true;
-                //if (sizeOfTable == 2) draw = false;
+                if (sizeOfTable == 2) draw = false;
                 addCenterPointToCaseAndRefresh(p, bitmap, widthZone / 2, draw);
                 // Draw a circle at point p with R = widthZone/2
 
@@ -293,9 +322,13 @@ namespace PremierePictureBoxApp
                     }
                     else if (!isSimilar(averageRTable[i + 1], averageRTable[i - 1]))
                     {
+                        if (!isSimilar(averageRTable[i + 1], averageRTable[i]))
+                            continue;
                         X = (i - 1) / sizeOfTable;
                         Y = (i - 1) % sizeOfTable;
                     }
+                    else if (isSimilar(averageRTable[i], averageRTable[i + 1]))
+                        continue;
                     else
                     {
                         X = (i) / sizeOfTable;
@@ -335,9 +368,13 @@ namespace PremierePictureBoxApp
                     }
                     else if (!isSimilar(averageGTable[i + 1], averageGTable[i - 1]))
                     {
+                        if (!isSimilar(averageGTable[i + 1], averageGTable[i]))
+                            continue;
                         X = (i - 1) / sizeOfTable;
                         Y = (i - 1) % sizeOfTable;
                     }
+                    else if (isSimilar(averageGTable[i], averageGTable[i + 1]))
+                        continue;
                     else
                     {
                         X = (i) / sizeOfTable;
@@ -377,9 +414,13 @@ namespace PremierePictureBoxApp
                     }
                     else if (!isSimilar(averageBTable[i + 1], averageBTable[i - 1]))
                     {
+                        if (!isSimilar(averageBTable[i + 1], averageBTable[i]))
+                            continue;
                         X = (i - 1) / sizeOfTable;
                         Y = (i - 1) % sizeOfTable;
                     }
+                    else if (isSimilar(averageBTable[i], averageBTable[i + 1]))
+                        continue;
                     else
                     {
                         X = (i) / sizeOfTable;
@@ -455,7 +496,7 @@ namespace PremierePictureBoxApp
 
         private bool isSimilar(int x1, int x2)
         {
-            if (absolute(x1, x2) <= ACCEPTED_AVERAGE_INTERVAL)
+            if (absolute(x1, x2) <= acceptedAverageInterval)
                 return true;
             return false;
         }

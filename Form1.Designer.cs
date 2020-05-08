@@ -162,9 +162,10 @@
             this.Controls.Add(this.btn_live);
             this.Controls.Add(this.btn_Test);
             this.Controls.Add(this.textBox1);
+            this.Location = new System.Drawing.Point(960, 300);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Form1";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Form1";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
