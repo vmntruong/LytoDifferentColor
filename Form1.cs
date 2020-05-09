@@ -47,6 +47,10 @@ namespace PremierePictureBoxApp
         static int numberOfClicks = 0;
         private bool _saveImage = true;
 
+        // Size of the table m x m => to calculate the size differently more rapidly
+        // will be recalculated later
+        private int sizeOfTable = 0;
+
         // Mouse control
         [DllImport("user32")]
         public static extern int SetCursorPos(int x, int y);
@@ -68,7 +72,7 @@ namespace PremierePictureBoxApp
             SetCursorPos(x, y);
             //this.Refresh();
             //Application.DoEvents();
-            Thread.Sleep(10); //20
+            //Thread.Sleep(10); //20
             mouse_event(MOUSEEVENTF_RIGHTDOWN, x, y, 0, 0);
             mouse_event(MOUSEEVENTF_RIGHTUP, x, y, 0, 0);
             numberOfClicks++;
@@ -119,7 +123,7 @@ namespace PremierePictureBoxApp
         private void OnKeyPress(object sender, KeyPressEventArgs e)
         {
             if (myTimer.Enabled)
-                myTimer.Stop();
+                stopAllTimers();
         }
 
         private void TimerEventProcessor(Object myObject, EventArgs myEventArgs)
@@ -149,8 +153,7 @@ namespace PremierePictureBoxApp
             {
                 if (myTimer.Enabled)
                 {
-                    timerToStopMouse.Stop();
-                    myTimer.Stop();
+                    stopAllTimers();
                 }
             }
         }
@@ -169,7 +172,8 @@ namespace PremierePictureBoxApp
         private void imageProcessing(Bitmap bitmap, bool mouseControl ,bool saveImage)
         {
             // Get the size m of table m x m 
-            int sizeOfTable = getSizeOfTable(bitmap);
+            if (sizeOfTable != 7)
+                sizeOfTable = getSizeOfTable(bitmap);
             if (sizeOfTable != 0)
             {
                 int widthZone = bitmap.Width / sizeOfTable;
@@ -213,7 +217,7 @@ namespace PremierePictureBoxApp
                 displayAllAverageCase(averageRTable, averageGTable, averageBTable, sizeOfTable * sizeOfTable);
 
                 // Find the case with different color
-                while (acceptedAverageInterval>=0)
+                while (acceptedAverageInterval >= 0)
                 {
                     if (findTheDifferentCase(averageRTable, averageGTable, averageBTable, sizeOfTable, ref X, ref Y))
                     {
@@ -229,6 +233,11 @@ namespace PremierePictureBoxApp
                             myTimer.Start();
                         }
                     }
+                    //if (acceptedAverageInterval == 0)
+                    //{
+                    //    acceptedAverageInterval = ACCEPTED_AVERAGE_INTERVAL;
+                    //    continue;
+                    //}
                     acceptedAverageInterval--;
                 }
 
@@ -593,6 +602,7 @@ namespace PremierePictureBoxApp
         private void button1_Click_1(object sender, EventArgs e)
         {
             Bitmap bitmap = (Bitmap)pictureBox1.Image;
+            sizeOfTable = 0;
             if (bitmap != null)
             {
                 imageProcessing(bitmap, false, _saveImage);
@@ -611,9 +621,8 @@ namespace PremierePictureBoxApp
         {
             pictureBox1.Image = null;
             numberOfClicks = 0;
-            myTimer.Stop();
-            timerToStopMouse.Stop();
-            
+            stopAllTimers();
+
         }
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
@@ -638,6 +647,13 @@ namespace PremierePictureBoxApp
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void stopAllTimers()
+        {
+            myTimer.Stop();
+            timerToStopMouse.Stop();
+            sizeOfTable = 0;
         }
     }
 
