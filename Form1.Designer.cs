@@ -39,7 +39,13 @@
             this.tB_maxClicks = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.tB_numberOfClick = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.nUpDown_startX = new System.Windows.Forms.NumericUpDown();
+            this.nUpDown_startY = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nUpDown_startX)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nUpDown_startY)).BeginInit();
             this.SuspendLayout();
             // 
             // openFileDialog1
@@ -48,17 +54,17 @@
             // 
             // textBox1
             // 
-            this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(538, 184);
+            this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox1.Location = new System.Drawing.Point(538, 271);
             this.textBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(159, 45);
+            this.textBox1.Size = new System.Drawing.Size(159, 36);
             this.textBox1.TabIndex = 3;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // btn_Test
             // 
-            this.btn_Test.Location = new System.Drawing.Point(538, 273);
+            this.btn_Test.Location = new System.Drawing.Point(538, 329);
             this.btn_Test.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_Test.Name = "btn_Test";
             this.btn_Test.Size = new System.Drawing.Size(122, 31);
@@ -69,10 +75,11 @@
             // 
             // btn_live
             // 
-            this.btn_live.Location = new System.Drawing.Point(538, 384);
+            this.btn_live.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_live.Location = new System.Drawing.Point(538, 387);
             this.btn_live.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_live.Name = "btn_live";
-            this.btn_live.Size = new System.Drawing.Size(75, 23);
+            this.btn_live.Size = new System.Drawing.Size(89, 41);
             this.btn_live.TabIndex = 7;
             this.btn_live.Text = "Auto";
             this.btn_live.UseVisualStyleBackColor = true;
@@ -91,7 +98,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(689, 273);
+            this.button1.Location = new System.Drawing.Point(689, 329);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 31);
             this.button1.TabIndex = 9;
@@ -102,7 +109,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(657, 383);
+            this.button2.Location = new System.Drawing.Point(657, 399);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 10;
@@ -147,11 +154,69 @@
             this.tB_numberOfClick.Size = new System.Drawing.Size(102, 45);
             this.tB_numberOfClick.TabIndex = 12;
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(543, 179);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(49, 17);
+            this.label3.TabIndex = 13;
+            this.label3.Text = "start X";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(543, 219);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(49, 17);
+            this.label4.TabIndex = 13;
+            this.label4.Text = "start Y";
+            // 
+            // nUpDown_startX
+            // 
+            this.nUpDown_startX.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nUpDown_startX.Location = new System.Drawing.Point(618, 170);
+            this.nUpDown_startX.Maximum = new decimal(new int[] {
+            1920,
+            0,
+            0,
+            0});
+            this.nUpDown_startX.Name = "nUpDown_startX";
+            this.nUpDown_startX.Size = new System.Drawing.Size(79, 30);
+            this.nUpDown_startX.TabIndex = 15;
+            this.nUpDown_startX.Value = new decimal(new int[] {
+            289,
+            0,
+            0,
+            0});
+            // 
+            // nUpDown_startY
+            // 
+            this.nUpDown_startY.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nUpDown_startY.Location = new System.Drawing.Point(618, 214);
+            this.nUpDown_startY.Maximum = new decimal(new int[] {
+            1920,
+            0,
+            0,
+            0});
+            this.nUpDown_startY.Name = "nUpDown_startY";
+            this.nUpDown_startY.Size = new System.Drawing.Size(79, 30);
+            this.nUpDown_startY.TabIndex = 15;
+            this.nUpDown_startY.Value = new decimal(new int[] {
+            503,
+            0,
+            0,
+            0});
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(810, 472);
+            this.Controls.Add(this.nUpDown_startY);
+            this.Controls.Add(this.nUpDown_startX);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.tB_numberOfClick);
             this.Controls.Add(this.tB_maxClicks);
             this.Controls.Add(this.label2);
@@ -169,6 +234,8 @@
             this.Text = "Form1";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nUpDown_startX)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nUpDown_startY)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -186,6 +253,10 @@
         private System.Windows.Forms.TextBox tB_maxClicks;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tB_numberOfClick;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.NumericUpDown nUpDown_startX;
+        private System.Windows.Forms.NumericUpDown nUpDown_startY;
     }
 }
 

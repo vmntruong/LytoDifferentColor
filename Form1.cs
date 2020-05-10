@@ -21,12 +21,16 @@ namespace PremierePictureBoxApp
     public partial class Form1 : Form
     {
         private const int width = 383;
-        private const int startX = 289;
-        private const int startY = 501;
+        private const int START_X = 289;
+        private const int START_Y = 503;
         private const int ACCEPTED_INTERVAL = 3;
         private int ACCEPTED_AVERAGE_INTERVAL;
         private int acceptedAverageInterval;
+        private const int TIME_INTERVAL = 400;
         //private const int MOUSE_CLICK_LIMIT = 10;
+
+        private static int startX;
+        private static int startY;
 
         private int count = 0;
 
@@ -94,7 +98,7 @@ namespace PremierePictureBoxApp
             acceptedAverageInterval = ACCEPTED_AVERAGE_INTERVAL;
 
             myTimer.Tick += new EventHandler(TimerEventProcessor);
-            myTimer.Interval = 400;
+            myTimer.Interval = TIME_INTERVAL;
 
             // create this timer to stop the myTimer 
             timerToStopMouse.Tick += new EventHandler(Timer1_Tick);
@@ -129,6 +133,9 @@ namespace PremierePictureBoxApp
         private void TimerEventProcessor(Object myObject, EventArgs myEventArgs)
         {
             Bitmap destBitmap = new Bitmap(width, width);
+            startX = nUpDown_startX.Value > 0 ? (int) nUpDown_startX.Value : START_X;
+            startY = nUpDown_startY.Value > 0 ? (int) nUpDown_startY.Value : START_Y;
+
             using (Graphics g = Graphics.FromImage(destBitmap))
             {
                 g.CopyFromScreen(new Point(startX, startY), Point.Empty, new Size(width, width));
@@ -150,12 +157,8 @@ namespace PremierePictureBoxApp
         {
             m_counter++;
             if (m_counter >= 5)
-            {
                 if (myTimer.Enabled)
-                {
                     stopAllTimers();
-                }
-            }
         }
 
         /// <summary>
@@ -174,6 +177,7 @@ namespace PremierePictureBoxApp
             // Get the size m of table m x m 
             if (sizeOfTable != 7)
                 sizeOfTable = getSizeOfTable(bitmap);
+
             if (sizeOfTable != 0)
             {
                 int widthZone = bitmap.Width / sizeOfTable;
@@ -229,9 +233,14 @@ namespace PremierePictureBoxApp
                         if (myTimer.Enabled == true)
                         {
                             myTimer.Stop();
-                            Thread.Sleep(400);
+                            Thread.Sleep(TIME_INTERVAL);
                             myTimer.Start();
                         }
+                        if (acceptedAverageInterval == 0)
+                        {
+                            X = -1; Y = -1;
+                        }
+
                     }
                     //if (acceptedAverageInterval == 0)
                     //{
@@ -331,10 +340,18 @@ namespace PremierePictureBoxApp
                     }
                     else if (!isSimilar(averageRTable[i + 1], averageRTable[i - 1]))
                     {
-                        if (!isSimilar(averageRTable[i + 1], averageRTable[i]))
-                            continue;
-                        X = (i - 1) / sizeOfTable;
-                        Y = (i - 1) % sizeOfTable;
+                        //if (!isSimilar(averageRTable[i + 1], averageRTable[i]))
+                        //    continue;
+                        //X = (i - 1) / sizeOfTable;
+                        //Y = (i - 1) % sizeOfTable;
+                        if (i - 1 == 0)
+                        {
+                            X = 0;
+                            Y = 0;
+                            isFound = true;
+                            break;
+                        }
+                        continue;
                     }
                     else if (isSimilar(averageRTable[i], averageRTable[i + 1]))
                         continue;
@@ -377,10 +394,18 @@ namespace PremierePictureBoxApp
                     }
                     else if (!isSimilar(averageGTable[i + 1], averageGTable[i - 1]))
                     {
-                        if (!isSimilar(averageGTable[i + 1], averageGTable[i]))
-                            continue;
-                        X = (i - 1) / sizeOfTable;
-                        Y = (i - 1) % sizeOfTable;
+                        //if (!isSimilar(averageGTable[i + 1], averageGTable[i]))
+                        //    continue;
+                        //X = (i - 1) / sizeOfTable;
+                        //Y = (i - 1) % sizeOfTable;
+                        if (i - 1 == 0)
+                        {
+                            X = 0;
+                            Y = 0;
+                            isFound = true;
+                            break;
+                        }
+                        continue;
                     }
                     else if (isSimilar(averageGTable[i], averageGTable[i + 1]))
                         continue;
@@ -423,10 +448,18 @@ namespace PremierePictureBoxApp
                     }
                     else if (!isSimilar(averageBTable[i + 1], averageBTable[i - 1]))
                     {
-                        if (!isSimilar(averageBTable[i + 1], averageBTable[i]))
-                            continue;
-                        X = (i - 1) / sizeOfTable;
-                        Y = (i - 1) % sizeOfTable;
+                        //if (!isSimilar(averageBTable[i + 1], averageBTable[i]))
+                        //    continue;
+                        //X = (i - 1) / sizeOfTable;
+                        //Y = (i - 1) % sizeOfTable;
+                        if (i - 1 == 0)
+                        {
+                            X = 0;
+                            Y = 0;
+                            isFound = true;
+                            break;
+                        }
+                        continue;
                     }
                     else if (isSimilar(averageBTable[i], averageBTable[i + 1]))
                         continue;
@@ -654,7 +687,9 @@ namespace PremierePictureBoxApp
             myTimer.Stop();
             timerToStopMouse.Stop();
             sizeOfTable = 0;
+            acceptedAverageInterval = ACCEPTED_AVERAGE_INTERVAL;
         }
+
     }
 
 
