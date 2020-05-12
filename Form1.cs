@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
-
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
 using Timer = System.Windows.Forms.Timer;
@@ -26,7 +26,7 @@ namespace PremierePictureBoxApp
         private const int ACCEPTED_INTERVAL = 3;
         private int ACCEPTED_AVERAGE_INTERVAL;
         private int acceptedAverageInterval;
-        private const int TIME_INTERVAL = 400;
+        private const int TIME_INTERVAL = 345;
         //private const int MOUSE_CLICK_LIMIT = 10;
 
         private static int startX;
@@ -49,7 +49,7 @@ namespace PremierePictureBoxApp
         // number of clicks
         // must be inferior or equal to MOUSE_CLICK_LIMIT, now is set by user via interface
         static int numberOfClicks = 0;
-        private bool _saveImage = true;
+        private bool _saveImage = false;
 
         // Size of the table m x m => to calculate the size differently more rapidly
         // will be recalculated later
@@ -105,7 +105,7 @@ namespace PremierePictureBoxApp
             timerToStopMouse.Interval = 1000;
 
             // This is to stop the timer when a key is clicked
-            this.KeyPress += new KeyPressEventHandler(OnKeyPress);
+            //this.KeyPress += new KeyPressEventHandler(OnKeyPress);
 
             // Delete all images in the temp folder
             if (_saveImage)
@@ -116,18 +116,6 @@ namespace PremierePictureBoxApp
                 foreach (System.IO.DirectoryInfo dir in di.GetDirectories())
                     dir.Delete(true);
             }
-
-            //if (Keyboard.IsKeyDown(Key.Enter))
-            //{
-            //    if (myTimer.Enabled)
-            //        myTimer.Stop();
-            //}
-        }
-
-        private void OnKeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (myTimer.Enabled)
-                stopAllTimers();
         }
 
         private void TimerEventProcessor(Object myObject, EventArgs myEventArgs)
@@ -146,11 +134,11 @@ namespace PremierePictureBoxApp
             imageProcessing(destBitmap, true, _saveImage);
             count++;
 
-            //if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.Enter))
-            //{
-            //    myTimer.Enabled = false;
-            //    MessageBox.Show("Timer Stopped");
-            //}
+            if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.Enter))
+            {
+                myTimer.Enabled = false;
+                MessageBox.Show("Timer Stopped");
+            }
         }
 
         private void Timer1_Tick(Object myObject, EventArgs myEventArgs)
@@ -661,15 +649,6 @@ namespace PremierePictureBoxApp
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
 
-        }
-
-        private void Form1_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.C)
-            {
-                myTimer.Stop();
-            }
-            
         }
 
         private void timer1_Tick_1(object sender, EventArgs e)

@@ -87,7 +87,9 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.pictureBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
+            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Cross;
             this.pictureBox1.Location = new System.Drawing.Point(67, 26);
             this.pictureBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pictureBox1.Name = "pictureBox1";
@@ -139,7 +141,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(535, 109);
+            this.label2.Location = new System.Drawing.Point(537, 98);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(114, 17);
             this.label2.TabIndex = 11;
@@ -147,11 +149,11 @@
             // 
             // tB_numberOfClick
             // 
-            this.tB_numberOfClick.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tB_numberOfClick.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tB_numberOfClick.Location = new System.Drawing.Point(657, 88);
             this.tB_numberOfClick.MaxLength = 5;
             this.tB_numberOfClick.Name = "tB_numberOfClick";
-            this.tB_numberOfClick.Size = new System.Drawing.Size(102, 45);
+            this.tB_numberOfClick.Size = new System.Drawing.Size(75, 30);
             this.tB_numberOfClick.TabIndex = 12;
             // 
             // label3
@@ -232,7 +234,6 @@
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Form1";
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nUpDown_startX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nUpDown_startY)).EndInit();
